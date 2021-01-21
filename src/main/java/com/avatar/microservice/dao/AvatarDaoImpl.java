@@ -1,64 +1,65 @@
 package com.avatar.microservice.dao;
 
 import com.avatar.microservice.model.Avatar;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+
 
 @Repository
 public class AvatarDaoImpl implements AvatarDao{
 
-    public static List<Avatar> avatars = new ArrayList<>();
-
-    static {
-        avatars.add(new Avatar(1, "Darth Vader", "Sith"));
-        avatars.add(new Avatar(2, "Luke Skywalker", "Jedi"));
-        avatars.add(new Avatar(3, "Chewbacca", "Wookie"));
-    }
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
 
     @Override
     public List<Avatar> findAll() {
-        return avatars;
+        return jdbcTemplate.query(
+                "select * from Avatars",
+                (rs, rowNum) ->
+                        new Avatar(
+                                rs.getInt("id"),
+                                rs.getString("name"),
+                                rs.getString("type")
+                        )
+        );
     }
 
     @Override
-    public Avatar findById(int id) {
-        for (Avatar avatar : avatars) {
-            if (avatar.getId() == id) {
-                return avatar;
-            }
-        }
-        return null;
+    public Optional<Avatar> findById(int id) {
+        return jdbcTemplate.queryForObject(
+                "select * from Avatars where id = ?",
+                new Object[]{id},
+                (rs, rowNum) ->
+                        Optional.of(new Avatar(
+                                rs.getInt("id"),
+                                rs.getString("name"),
+                                rs.getString("type")
+                        ))
+        );
     }
 
     @Override
-    public Avatar save(Avatar avatar) {
-        avatars.add(avatar);
-        return avatar;
+    public int save(Avatar avatar) {
+        return jdbcTemplate.update(
+                "insert into Avatars (name, type) values(?,?)",
+                avatar.getName(), avatar.getType());
     }
 
     @Override
-    public Avatar deleteOne(int id) {
-        for (Avatar avatar : avatars) {
-            if (avatar.getId() == id) {
-                avatars.remove(avatar);
-                return avatar;
-            }
-        }
-        return null;
+    public int deleteOne(int id) {
+        return jdbcTemplate.update(
+                "delete from Avatars where id = ?",
+                id);
     }
 
     @Override
-    public Avatar put(Avatar updatedAvatar, int id) {
-        for (Avatar avatar : avatars) {
-            if (avatar.getId() == id) {
-                avatar.setName(updatedAvatar.getName());
-                avatar.setType(updatedAvatar.getType());
-                return avatar;
-            }
-        }
-        return null;
+    public int put(Avatar updatedAvatar, int id) {
+        return jdbcTemplate.update(
+                "update Avatars set name = ?, type = ? where id = ?",
+                updatedAvatar.getName(), updatedAvatar.getType(), id);
     }
-
 }

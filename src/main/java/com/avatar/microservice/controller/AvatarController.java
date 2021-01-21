@@ -3,7 +3,6 @@ package com.avatar.microservice.controller;
 import com.avatar.microservice.dao.AvatarDao;
 import com.avatar.microservice.model.Avatar;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -12,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 public class AvatarController {
@@ -19,7 +19,7 @@ public class AvatarController {
     @Autowired
     private AvatarDao avatarDao;
 
-    //Get Avatar
+    //Get Avatars
     @Operation(summary = "Get a list of avatars")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Found the avatar",
@@ -40,19 +40,19 @@ public class AvatarController {
 
     //Delete Avatar
     @DeleteMapping(value = "Avatar/{id}")
-    public Avatar deleteOne(@PathVariable int id) {
+    public int deleteOne(@PathVariable int id) {
         return avatarDao.deleteOne(id);
     }
 
     //Put Avatar
     @PutMapping("/Avatar/{id}")
-    public Avatar put(@RequestBody Avatar updatedAvatar, @PathVariable int id) {
+    public int put(@RequestBody Avatar updatedAvatar, @PathVariable int id) {
         return avatarDao.put(updatedAvatar, id);
     }
 
-    //Avatar/{id}
+    //Get Avatar by Id
     @GetMapping(value = "Avatar/{id}")
-    public Avatar displayAvatar(@PathVariable int id) {
+    public Optional<Avatar> displayAvatar(@PathVariable int id) {
         return avatarDao.findById(id);
     }
 }
