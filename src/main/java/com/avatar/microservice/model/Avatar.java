@@ -1,10 +1,20 @@
 package com.avatar.microservice.model;
 
+import javax.persistence.*;
+
+@Entity(name="avatar")
 public class Avatar {
 
+    @Id
+    @GeneratedValue
     private int id;
+    @Column(name = "name")
     private String name;
+    @Column(name = "type")
     private String type;
+
+    public Avatar() {
+    }
 
     public Avatar(int id, String name, String type) {
         this.id = id;

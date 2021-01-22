@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -29,8 +30,10 @@ public class AvatarController {
                     content = @Content) })
     @GetMapping(value = "Avatar")
     public List<Avatar> avatarsList() {
-        return avatarDao.findAll();
+       return avatarDao.findAll();
     }
+
+
 
     //Post Avatar
     @PostMapping(value = "Avatar")
@@ -40,19 +43,19 @@ public class AvatarController {
 
     //Delete Avatar
     @DeleteMapping(value = "Avatar/{id}")
-    public int deleteOne(@PathVariable int id) {
-        return avatarDao.deleteOne(id);
+    public void deleteOne(Avatar avatar) {
+        avatarDao.delete(avatar);
     }
 
     //Put Avatar
-    @PutMapping("/Avatar/{id}")
-    public int put(@RequestBody Avatar updatedAvatar, @PathVariable int id) {
-        return avatarDao.put(updatedAvatar, id);
+    @PutMapping("/Avatar")
+    public void put(@RequestBody Avatar avatar) {
+        avatarDao.save(avatar);
     }
 
     //Get Avatar by Id
     @GetMapping(value = "Avatar/{id}")
-    public Optional<Avatar> displayAvatar(@PathVariable int id) {
+    public Avatar displayAvatar(@PathVariable int id) {
         return avatarDao.findById(id);
     }
 }
